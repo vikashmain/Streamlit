@@ -2,7 +2,7 @@ import streamlit as st
 import preprocessor,helper
 import matplotlib.pyplot as plt
 import seaborn as sns
-import m
+
 st.sidebar.title("Whatsapp Chat Analyzer")
 
 uploaded_file = st.sidebar.file_uploader("Choose a file")
@@ -126,7 +126,7 @@ if uploaded_file is not None:
 
     if st.sidebar.button("Show Sentiment"): 
         st.write("Note: It will take time to process as there are lot of messages.") 
-        str = m.analyse(df,selected_user)  
+        str = helper.analyse(df,selected_user)  
         st.dataframe(str)
         a = ((str['positive'] + str['neutral']) / str['total_messages']) * 100
         a_value = a.iloc[0]  # Extract scalar value from Series
