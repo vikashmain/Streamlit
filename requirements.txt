@@ -10,6 +10,5 @@ tensorflow
 numpy
 nltk        
 joblib
-re
 bs4
 
