@@ -13,6 +13,11 @@ from tensorflow.keras.preprocessing.text import Tokenizer
 from keras.preprocessing.sequence import pad_sequences
 from bs4 import BeautifulSoup
 
+import pickle
+
+with open('tokenizer.pkl', 'rb') as f:
+    tokenizer = pickle.load(f)
+    
 # Ensure necessary NLTK downloads
 nltk.download('stopwords')
 nltk.download('wordnet')
@@ -56,7 +61,6 @@ def clean_message(message):
 vocab_size = 5000  
 max_length = 200  
 embedding_dim = 100
-tokenizer = Tokenizer(num_words=vocab_size, oov_token='')
 model = load_model('model.keras')
 
 # Function to predict sentiment of a message
