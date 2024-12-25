@@ -220,39 +220,63 @@ tokenizer = Tokenizer(num_words=vocab_size, oov_token='')
 from tensorflow.keras.models import load_model
 
 model = load_model('model.keras')
-
+def clean_message(message):
+    # Ensure the message is not None or empty
+    if message is None or message == "":
+        return ""
+    return message
 
 def predict_(text):
+    # Ensure the text is a string
     text = str(text)
+    
+    # Clean the text
     cleaned_text = clean_text(text)  
     
-    # Tokenize the text
+    # Tokenize the cleaned text
     tokenized_text = tokenizer.texts_to_sequences([cleaned_text])
     
-   
+    # Pad the tokenized text to the required length
     padded_text = pad_sequences(tokenized_text, maxlen=200, padding='post', truncating='post')
+    
+    # Predict sentiment using the model
     prediction = model.predict(padded_text)
-    if 0.48 < prediction[0] < 0.55:
-        return f"Neutral"
-
-    sentiment = "Negative" if prediction[0] < 0.40 else "Positive"
-
-    return f"{sentiment}"
-
+    
+    # Handle different prediction ranges
+    if prediction[0] < 0.40:
+        return "Negative"
+    elif 0.48 < prediction[0] < 0.55:
+        return "Neutral"
+    else:
+        return "Positive"
 
 import pandas as pd
 
 def analyse(data, user):
+    # Filter messages for the selected user
     user_messages = data[data['user'] == user]['message']
     
+    # Convert the messages to a list
     message_list = user_messages.tolist()
     
+    # Initialize sentiment counters
     positive_count = 0
     negative_count = 0
     neutral_count = 0
     
+    # Check if the user has any messages
+    if not message_list:
+        return pd.DataFrame([{
+            'user': user,
+            'total_messages': 0,
+            'positive': 0,
+            'negative': 0,
+            'neutral': 0,
+        }])
+
+    # Iterate through each message and predict its sentiment
     for message in message_list:
-        sentiment = predict_(message) 
+        sentiment = predict_(message)
         if sentiment == 'Positive':
             positive_count += 1
         elif sentiment == 'Negative':
@@ -260,16 +284,16 @@ def analyse(data, user):
         else:
             neutral_count += 1
     
-    
+    # Calculate the total number of messages
     total_messages = len(message_list)
     
-   
-    a=  [{
+    # Create a DataFrame with the results
+    results = [{
         'user': user,
         'total_messages': total_messages,
         'positive': positive_count,
         'negative': negative_count,
         'neutral': neutral_count,
     }]
-    b = pd.DataFrame(a)
-    return b
+    
+    return pd.DataFrame(results)
