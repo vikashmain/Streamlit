@@ -19,7 +19,7 @@ import nltk
 from nltk.corpus import stopwords
 ##nltk.download('stopwords')
 
-df = pd.read_csv('/Users/Vikash/Desktop/ChatAnalysis/Sentiment/dataset.csv')
+##df = pd.read_csv('/Users/Vikash/Desktop/ChatAnalysis/Sentiment/dataset.csv')
 
 stop_word = set(stopwords.words('english'))
 
@@ -51,8 +51,8 @@ def clean_text(text):
 
 
 from nltk.stem import WordNetLemmatizer
-##nltk.download('wordnet')
-##nltk.download('omw-1.4')
+nltk.download('wordnet')
+nltk.download('omw-1.4')
 
 lemmatizer = WordNetLemmatizer()
 import pandas as pd
@@ -70,19 +70,19 @@ def lemmatize_text(text):
         return ""
 
 # Apply the lemmatize_text function to the 'Text' column of the dataframe
-df['Text'] = df['Text'].apply(lambda x: lemmatize_text(str(x)))  # Convert all to string first
+# df['Text'] = df['Text'].apply(lambda x: lemmatize_text(str(x)))  # Convert all to string first
 
-X = df['Text']  
-y = df['Sentiment'] 
+# X = df['Text']  
+# y = df['Sentiment'] 
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+# X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
 
 vocab_size = 5000  
 max_length = 200  
 embedding_dim = 100
 tokenizer = Tokenizer(num_words=vocab_size, oov_token='')
-tokenizer.fit_on_texts(X_train)
+##tokenizer.fit_on_texts(X_train)
 
 # X_train_seq = tokenizer.texts_to_sequences(X_train)
 # X_test_seq = tokenizer.texts_to_sequences(X_test)
