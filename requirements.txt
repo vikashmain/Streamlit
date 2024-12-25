@@ -11,4 +11,5 @@ numpy
 nltk        
 joblib
 bs4
+stopwords
 
