@@ -233,14 +233,29 @@ def predict_(text):
     # Clean the text
     cleaned_text = clean_text(text)  
     
+    if not cleaned_text:  # Check if cleaned_text is empty or None
+        print(f"Warning: Empty or invalid cleaned text for message: {text}")
+        return "Neutral"  # Return a default value if the text is invalid
+    
     # Tokenize the cleaned text
     tokenized_text = tokenizer.texts_to_sequences([cleaned_text])
+    
+    if not tokenized_text or not tokenized_text[0]:  # Check if tokenized text is empty
+        print(f"Warning: Empty tokenized text for message: {text}")
+        return "Neutral"  # Return a default value if the tokenized text is empty
     
     # Pad the tokenized text to the required length
     padded_text = pad_sequences(tokenized_text, maxlen=200, padding='post', truncating='post')
     
     # Predict sentiment using the model
     prediction = model.predict(padded_text)
+    
+    if prediction is None or len(prediction) == 0:  # Check if the model prediction is valid
+        print(f"Warning: Invalid prediction for message: {text}")
+        return "Neutral"  # Return a default value if the prediction is invalid
+    
+    # Inspect the prediction value to ensure it's a valid number
+    print(f"Prediction value for message: {text} = {prediction[0]}")
     
     # Handle different prediction ranges
     if prediction[0] < 0.40:
@@ -266,6 +281,7 @@ def analyse(data, user):
     
     # Check if the user has any messages
     if not message_list:
+        print(f"Warning: No messages found for user {user}")
         return pd.DataFrame([{
             'user': user,
             'total_messages': 0,
