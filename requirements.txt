@@ -5,4 +5,11 @@ urlextract
 wordcloud
 pandas
 emoji
-##.\myenv\Scripts\Activate
+scikit-learn
+tensorflow
+numpy
+nltk        
+joblib
+re
+bs4
+
