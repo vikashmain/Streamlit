@@ -133,134 +133,6 @@ def month_activity_map(selected_user,df):
     return df['month'].value_counts()
 
 
-def sentiment(selected_user,df):
-    if selected_user != 'Overall':
-        df = df[df['user'] == selected_user]
-    import tensorflow as tf
-    import re
-    import pandas as pd
-    import numpy as np
-    from sklearn.preprocessing import LabelEncoder
-    from sklearn.model_selection import train_test_split
-    from tensorflow.keras.preprocessing.text import Tokenizer
-    from keras.preprocessing.sequence import pad_sequences
-    import keras
-    from sklearn.metrics import classification_report
-    from sklearn.metrics import accuracy_score
-    import math
-    import nltk
-    df = pd.read_csv('dataset.csv')
-    import nltk
-    from nltk.corpus import stopwords
-##nltk.download('stopwords')
-    stop_word = set(stopwords.words('english'))
-    import re
-    from bs4 import BeautifulSoup
-
-
-    def remove_html_tags(text):
-        return BeautifulSoup(text, "html.parser").get_text()
-
-
-    def remove_urls(text):
-        return re.sub(r'http\S+|www\S+', '', text)
-
-    def remove_non_alphanumeric(text):
-        return re.sub(r'[^A-Za-z\s]', '', text)
-    
-    def remove_stopwords(text):
-        words = text.split()
-        filtered_words = [word for word in words if word.lower() not in stop_word]
-        return  " ".join(filtered_words)
-    
-    def clean_text(text):
-        text = remove_html_tags(text)
-        text = remove_urls(text)
-        text = remove_non_alphanumeric(text)
-        text = remove_stopwords(text)
-        return text 
-    df['Text'] = df['Text'].astype(str)
-    df['Text'] = df['Text'].apply(clean_text)
-    from nltk.stem import WordNetLemmatizer
-    nltk.download('wordnet')
-    nltk.download('omw-1.4')
-    lemmatizer = WordNetLemmatizer()
-    def lemmatize_text(text):
-        words = text.split()
-        lemmatized_words = [lemmatizer.lemmatize(word) for word in words]
-        return " ".join(lemmatized_words)
-
-    df['Text']=df['Text'].apply(lemmatize_text)
-    X = df['Text']  
-    y = df['Sentiment'] 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-    vocab_size = 5000  
-    max_length = 200  
-    embedding_dim = 100
-    tokenizer = Tokenizer(num_words=vocab_size, oov_token='')
-    tokenizer.fit_on_texts(X_train)
-    X_train_seq = tokenizer.texts_to_sequences(X_train)
-    X_test_seq = tokenizer.texts_to_sequences(X_test)
-    X_train_padded = pad_sequences(X_train_seq, maxlen=max_length, padding='post', truncating='post')
-    X_test_padded = pad_sequences(X_test_seq, maxlen=max_length, padding='post', truncating='post')
-    model = keras.Sequential([
-    keras.layers.Embedding(vocab_size, embedding_dim, input_length=max_length),
-    keras.layers.Bidirectional(keras.layers.LSTM(64)),
-    keras.layers.Dense(24, activation='relu'),
-    keras.layers.Dense(1, activation='sigmoid')
-    ])
-    model.compile(loss='binary_crossentropy',
-              optimizer='adam',
-              metrics=['accuracy'])
-    history = model.fit(
-        X_train_padded,  
-        y_train,       
-        epochs=5,      
-        verbose=1,
-        validation_split=0.1
-    )
-    def predict_(text):
-   
-        cleaned_text = clean_text(text)  
-    
-    # Tokenize the text
-        tokenized_text = tokenizer.texts_to_sequences([cleaned_text])
-    
-   
-        padded_text = pad_sequences(tokenized_text, maxlen=max_length, padding='post', truncating='post')
-        prediction = model.predict(padded_text)
-        if 0.45 < prediction[0] < 0.55:
-            return "Neutral"
-
-        sentiment = "Positive" if prediction[0] > 0.5 else "Negative"
-
-        return f"{sentiment}"
-    def analyse(df, user):
-        positive = 0
-        negative = 0
-        neutral=0
-    # Filter rows based on the user variable (use user instead of the string 'user')
-        res = df[df['user'] == user]
-        res['message'] = res['message'].astype(str).fillna('')
-    
-    # Iterate through the filtered DataFrame
-        for i in range(len(res)):
-            text = res['message'].iloc[i]
-            if predict_(text) == 'Positive':
-                positive += 1
-            elif predict_(text) == 'Negative':
-                negative += 1
-            else:
-                neutral +=1
-
-    # Calculate positive percentage
-            positive_percentage = (positive + neutral) / (positive + negative+neutral) * 100 if (positive + negative) > 0 else 0
-            negative_percentage = (negative) / (positive + negative+neutral) * 100 if (positive + negative) > 0 else 0
-    
-            return f"Positive  % of {user} is {positive_percentage:.2f}%     Negative % of {user} is {negative_percentage}%"
-
-
-
 import re
 import pandas as pd
 import numpy as np
@@ -280,7 +152,7 @@ import numpy as np
 
 import nltk
 from nltk.corpus import stopwords
-##nltk.download('stopwords')
+nltk.download('stopwords')
 
 ##df = pd.read_csv('/Users/Vikash/Desktop/ChatAnalysis/Sentiment/dataset.csv')
 
@@ -345,34 +217,6 @@ vocab_size = 5000
 max_length = 200  
 embedding_dim = 100
 tokenizer = Tokenizer(num_words=vocab_size, oov_token='')
-##tokenizer.fit_on_texts(X_train)
-
-# X_train_seq = tokenizer.texts_to_sequences(X_train)
-# X_test_seq = tokenizer.texts_to_sequences(X_test)
-
-# X_train_padded = pad_sequences(X_train_seq, maxlen=max_length, padding='post', truncating='post')
-# X_test_padded = pad_sequences(X_test_seq, maxlen=max_length, padding='post', truncating='post')
-
-# model = keras.Sequential([
-#     keras.layers.Embedding(vocab_size, embedding_dim, input_length=max_length),
-#     keras.layers.Bidirectional(keras.layers.LSTM(64)),
-#     keras.layers.Dense(24, activation='relu'),
-#     keras.layers.Dense(1, activation='sigmoid')
-# ])
-
-# model.compile(loss='binary_crossentropy',
-#               optimizer='adam',
-#               metrics=['accuracy'])
-# history = model.fit(
-#     X_train_padded,  
-#     y_train,       
-#     epochs=5,      
-#     verbose=1,
-#     validation_split=0.1
-# )
-
-# model.save('model.keras')
-
 from tensorflow.keras.models import load_model
 
 model = load_model('model.keras')
@@ -430,6 +274,3 @@ def analyse(data, user):
     }]
     b = pd.DataFrame(a)
     return b
-
-        
-
