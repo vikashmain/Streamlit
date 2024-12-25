@@ -4,5 +4,5 @@ seaborn
 urlextract
 wordcloud
 pandas
-##emojip
+emoji
 ##.\myenv\Scripts\Activate
