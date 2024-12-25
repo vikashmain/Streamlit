@@ -1,0 +1,8 @@
+streamlit
+matplotlib
+seaborn
+urlextract
+wordcloud
+pandas
+##emojip
+##.\myenv\Scripts\Activate
