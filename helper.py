@@ -239,7 +239,6 @@ def predict_(text):
 
     return f"{sentiment}"
 
-data = pd.read_csv('/Users/Vikash/Desktop/ChatAnalysis/Sentiment/data.csv')
 
 import pandas as pd
 
